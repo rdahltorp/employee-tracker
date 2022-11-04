@@ -14,13 +14,13 @@ VALUES ("Marketing Lead", 180000, 1),
        ("Accounting Lead", 180000, 4),
        ("Accountant", 100000, 4);
 
-INSERT INTO employee (first_name, last_name, role_id, ,manager_id)
+INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Han", "Solo", 1, NULL),
        ("Chewy", "Bacca", 2, 1),
        ("Artoo", "Deetoo", 3, NULL),
        ("Bebe", "Eight", 4, 3),
        ("Leia", "Organa", 5, NULL),
        ("Cee", "Threepeo", 6, 5),
-       ("Darth", "Vader", 7, Null),
+       ("Darth", "Vader", 7, NULL),
        ("Luke", "Skywalker", 8, 7);
 
