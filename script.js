@@ -1,11 +1,18 @@
 const cTable = require('console.table');
 const { response } = require('express');
 const inquirer = require('inquirer');
+const fs = require('fs');
+const mysql = require('mysql2')
 
 //Additional Functions
 function viewDepts() {
     //Add a cTable takes the query to view departments
+    const viewDeptsQuery = fs.readFileSync('./queries/viewDepts_query.sql').toString();
+    let sql = viewDeptsQuery
+
+    console.table(sql)
     //Add mainMenu() call 
+    mainMenu()
 }
 
 function viewRoles() {
