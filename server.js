@@ -81,6 +81,7 @@ function addDepartment () {
 
 function addRole () {
     const sql = fs.readFileSync('./queries/addRole_query.sql').toString();
+
     inquirer
         .prompt([
             {
@@ -131,21 +132,53 @@ function addEmployee () {
                 name: 'role_id'
             },
             {
-                message: "What is this employee's manager id number?",
-                type: 'input',
-                name: 'manager_id'
+                message: "Does this employee have a manager?",
+                type: 'list',
+                choices: ['Yes', 'No'],
+                name: 'hasManager'
             }
+
         ])
         .then(employee => {
-            db.query(sql, {
-                first_name: employee.first_name,
-                last_name: employee.last_name,
-                role_id: employee.role_id,
-                manager_id: employee.manager_id
-            });
-            console.table(employee);
-            mainMenu()
-        });
+            if(employee.hasManager === "Yes"){
+                inquirer
+                    .prompt([
+                        {
+                            message: "What is this employee's manager id number?",
+                            type: 'input',
+                            name: 'manager_id'
+                        }
+                    ])
+                    .then(directReport => {
+                        delete employee.hasManager;
+
+                        let newEmp = {
+                            ...employee,
+                            ...directReport
+                        };
+
+                        db.query(sql, {
+                            first_name: newEmp.first_name,
+                            last_name: newEmp.last_name,
+                            role_id: newEmp.role_id,
+                            manager_id: newEmp.manager_id
+                        });
+                        console.table(newEmp);
+                        mainMenu()
+                    })
+            } else {
+                delete employee.hasManager;
+
+                db.query(sql, {
+                    first_name: employee.first_name,
+                    last_name: employee.last_name,
+                    role_id: employee.role_id,
+                    manager_id: null
+                });
+                console.table(employee);
+                mainMenu()
+            }
+        })
 }
 
 function updateEmployeeRole () {
