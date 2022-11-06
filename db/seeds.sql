@@ -4,7 +4,7 @@ VALUES ("Marketing"),
        ("Legal"),
        ("Human Resources");
 
-INSERT INTO role (title, salary, department_id)
+INSERT INTO roles (title, salary, department_id)
 VALUES ("Marketing Lead", 180000, 1),
        ("Marketing Associate", 90000, 1),
        ("Engineering Lead", 200000, 2),

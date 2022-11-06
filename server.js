@@ -74,13 +74,14 @@ function addDepartment () {
             name: 'name'
         }])
         .then(answer => {
-            db.query(sql, answer.name) //LEFT OFF HERE.
+            db.query(sql, answer.name);
             console.table(viewDepts());
-        })
+        });
 }
 
 function addRole () {
-    //Add inquirer prompt here for these specific questions. Also need to POST to db. ALso return cTable
+    const sql = fs.readFileSync('./queries/addRole_query.sql').toString();
+    
     inquirer
         .prompt([
             {
@@ -94,13 +95,15 @@ function addRole () {
                 name: 'salary'
             },
             {
-                message: 'What department number is this role in?',
+                message: 'What department is this role in?',
                 type: 'input',
                 name: 'department_id'
             }
         ])
-        .then(answer => (console.log(answer)));
-    //Add mainMenu() call    
+        .then(role => {
+            db.query(sql, role.title, role.salary, role.department_id);
+            console.table(viewRoles());
+        });
 }
 
 function addEmployee () {
