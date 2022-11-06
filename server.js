@@ -38,6 +38,7 @@ function viewDepts() {
 };
 
 function viewRoles() {
+    //RECIVING ERROR. Needs work
     const sql = fs.readFileSync('./queries/viewRoles_query.sql').toString();
 
     db.query(sql, async (err, rows) => {
@@ -51,7 +52,7 @@ function viewRoles() {
 };
 
 function viewEmps() {
-    //RECIVING ERROR
+    //RECIVING ERROR. Needs work
     const sql = fs.readFileSync('./queries/viewEmps_query.sql').toString();
 
     db.query(sql, async (err, rows) => {
@@ -81,7 +82,6 @@ function addDepartment () {
 
 function addRole () {
     const sql = fs.readFileSync('./queries/addRole_query.sql').toString();
-    
     inquirer
         .prompt([
             {
@@ -101,13 +101,19 @@ function addRole () {
             }
         ])
         .then(role => {
-            db.query(sql, role.title, role.salary, role.department_id);
-            console.table(viewRoles());
+            db.query(sql, {
+                title: role.title,
+                salary: role.salary,
+                department_id: role.department_id
+            });
+            console.table(role);
+            mainMenu()
         });
 }
 
 function addEmployee () {
-    //Add inquirer prompt here for these specific questions. Also need to POST to db. ALso return cTable
+    const sql = fs.readFileSync('./queries/addEmp_query.sql').toString();
+
     inquirer
         .prompt([
             {
@@ -131,12 +137,20 @@ function addEmployee () {
                 name: 'manager_id'
             }
         ])
-        .then(answer => (console.log(answer)));
-    //Add mainMenu() call    
+        .then(employee => {
+            db.query(sql, {
+                first_name: employee.first_name,
+                last_name: employee.last_name,
+                role_id: employee.role_id,
+                manager_id: employee.manager_id
+            });
+            console.table(employee);
+            mainMenu()
+        });
 }
 
 function updateEmployeeRole () {
-    //Add inquirer prompt here for these specific questions. Also need to PUT to db. 
+    //Needs work 
     inquirer
         .prompt([
             {
