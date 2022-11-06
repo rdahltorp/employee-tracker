@@ -65,15 +65,18 @@ function viewEmps() {
 }
 
 function addDepartment () {
-    //Add inquirer prompt here for these specific questions. Also need to POST to db. ALso return cTable
+    const sql = fs.readFileSync('./queries/addDept_query.sql').toString();
+    
     inquirer
         .prompt([{
             message: "What is the name of the new department?",
             type: 'input',
             name: 'name'
         }])
-        .then(answer => (console.log(answer)));
-    //Add mainMenu() call    
+        .then(answer => {
+            db.query(sql, answer.name) //LEFT OFF HERE.
+            console.table(viewDepts());
+        })
 }
 
 function addRole () {
