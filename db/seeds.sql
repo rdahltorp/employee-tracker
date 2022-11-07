@@ -11,8 +11,8 @@ VALUES ("Marketing Lead", 180000, 1),
        ("Engineer", 120000, 2),
        ("Senior Lawyer", 300000, 3),
        ("Lawyer", 150000, 3),
-       ("Accounting Lead", 180000, 4),
-       ("Accountant", 100000, 4);
+       ("HR Lead", 180000, 4),
+       ("HR Recruiter", 100000, 4);
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("Han", "Solo", 1, NULL),

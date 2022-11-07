@@ -3,8 +3,6 @@ const express = require('express') //I may not need express since I am not trigg
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 const fs = require('fs');
-const { Server } = require('http');
-const { type } = require('os');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -21,6 +19,20 @@ const db = mysql.createConnection({
 },
 console.log("You are now connected to the employees_db database")
 );
+
+//CODE BELOW IS TRYING TO PULL DATA IN FROM THE DB, STRINGIFY IT AND THEN MAKE IT AN ARRAY. NOT WORKING SO FAR
+function test() {
+    const currentEmpIds = db.query('SELECT id FROM employee', (req, res) => {
+        res.json({
+            id
+        })
+    })
+    const stringIt = JSON.stringify(currentEmpIds)
+    //const empsArray = currentEmpIds.split(" ")
+
+
+    console.log(currentEmpIds);
+}
 
 
 //Additional Functions
@@ -181,34 +193,26 @@ function addEmployee () {
         })
 }
 
-function updateEmployeeRole () {
-    //Needs work 
+function updateEmployeeRole () {  
     inquirer
         .prompt([
             {
-                message: "Which employee would you like to update?",
-                type: 'list',
-                name: 'employee',
-                choices: []
-            },
-            {
-                message: "What is the new employee's last name?",
+                message: "What is the ID of the employee you would like to update?",
                 type: 'input',
-                name: 'last_name'
+                name: 'id',
             },
             {
-                message: "What is this employee's role id number?",
+                message: "What is the id of the new role this employee will have?",
                 type: 'input',
                 name: 'role_id'
-            },
-            {
-                message: "What is this employee's manager id number?",
-                type: 'input',
-                name: 'manager_id'
             }
         ])
-        .then(answer => (console.log(answer)));
-    //Add mainMenu() call   
+        .then(roleUpdate => {
+            //Could not get SQL statement to work in separate file so included in function.  
+            db.query(`UPDATE employee SET ? WHERE id = ${roleUpdate.id}`, roleUpdate)
+            console.table(roleUpdate);
+            mainMenu()
+        })
 }
 
 function mainMenu() {
@@ -256,3 +260,4 @@ function mainMenu() {
 }
 
 mainMenu()
+//test()
