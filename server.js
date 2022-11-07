@@ -59,7 +59,6 @@ function viewRoles() {
 };
 
 function viewEmps() {
-    //RECIVING ERROR. Needs work
     const sql = fs.readFileSync('./queries/viewEmps_query.sql').toString();
 
     db.query(sql, async (err, rows) => {
