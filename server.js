@@ -20,18 +20,14 @@ const db = mysql.createConnection({
 console.log("You are now connected to the employees_db database")
 );
 
-//CODE BELOW IS TRYING TO PULL DATA IN FROM THE DB, STRINGIFY IT AND THEN MAKE IT AN ARRAY. NOT WORKING SO FAR
+//CODE BELOW IS TRYING TO PULL DATA IN FROM THE DB SO I CAN USE AS ANSWERS IN FLOW. 
 function test() {
-    const currentEmpIds = db.query('SELECT id FROM employee', (req, res) => {
-        res.json({
-            id
-        })
+    db.query('SELECT name FROM department', (err, depts) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(depts);
     })
-    const stringIt = JSON.stringify(currentEmpIds)
-    //const empsArray = currentEmpIds.split(" ")
-
-
-    console.log(currentEmpIds);
 }
 
 
@@ -94,6 +90,13 @@ function addDepartment () {
 function addRole () {
     const sql = fs.readFileSync('./queries/addRole_query.sql').toString();
 
+    const currentDepts = db.query('SELECT name FROM department', (err, depts) => {
+        if(err) {
+            console.log(err);
+        }
+        console.log(depts);
+    })
+
     inquirer
         .prompt([
             {
@@ -111,6 +114,13 @@ function addRole () {
                 type: 'input',
                 name: 'department_id'
             }
+            // CODE BELOW IS TRYING TO INPUT DATA FROM THE DB AS ANSWER CHOICES.
+            // {
+            //     message: 'What department is this role in?',
+            //     type: 'list',
+            //     name: 'department',
+            //     choices: [currentDepts] 
+            // }
         ])
         .then(role => {
             db.query(sql, {
