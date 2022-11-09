@@ -12,17 +12,6 @@ const db = mysql.createConnection({
 console.log("You are now connected to the employees_db database")
 );
 
-//CODE BELOW IS TRYING TO PULL DATA IN FROM THE DB SO I CAN USE AS ANSWERS IN FLOW. 
-function test() {
-    db.query('SELECT name FROM department', (err, depts) => {
-        if(err) {
-            console.log(err);
-        }
-        console.log(depts);
-    })
-}
-
-
 //Additional Functions
 function viewDepts() {
     const sql = fs.readFileSync('./queries/viewDepts_query.sql').toString();
@@ -299,4 +288,3 @@ function mainMenu() {
 }
 
 mainMenu()
-//test()
