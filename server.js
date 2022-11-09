@@ -99,7 +99,6 @@ async function addRole () {
             }
         ])
         .then(role => {
-            console.log(role);
             db.query(sql, {
                 title: role.title,
                 salary: role.salary,
