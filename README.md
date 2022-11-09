@@ -25,6 +25,6 @@ Once live, a user can review/create new roles, departments, and employees throug
 
 Packages used in this application: 
 - MySQL2 
-- Inquierer
+- Inquirer
 - cTable
 

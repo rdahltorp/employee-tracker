@@ -1,15 +1,7 @@
 const mysql = require('mysql2');
-const express = require('express') //I may not need express since I am not triggering HTTP routes. May need to delete.
 const cTable = require('console.table');
 const inquirer = require('inquirer');
 const fs = require('fs');
-
-const PORT = process.env.PORT || 3001;
-const app = express();
-
-// Express middleware //see note above
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 
 const db = mysql.createConnection({
     host: 'localhost',
@@ -86,14 +78,16 @@ function addDepartment () {
         });
 }
 
-function addRole () {
+async function addRole () {
     const sql = fs.readFileSync('./queries/addRole_query.sql').toString();
 
-    const currentDepts = db.query('SELECT name FROM department', (err, depts) => {
-        if(err) {
-            console.log(err);
+    const currentDepts = await db.promise().query('SELECT name, id FROM department')
+    
+    const cDepts = currentDepts[0].map((dept) => {
+        return {
+            name: dept.name, 
+            value: dept.id
         }
-        console.log(depts);
     })
 
     inquirer
@@ -110,30 +104,44 @@ function addRole () {
             },
             {
                 message: 'What department is this role in?',
-                type: 'input',
-                name: 'department_id'
+                type: 'list',
+                name: 'department',
+                choices: cDepts 
             }
-            // CODE BELOW IS TRYING TO INPUT DATA FROM THE DB AS ANSWER CHOICES.
-            // {
-            //     message: 'What department is this role in?',
-            //     type: 'list',
-            //     name: 'department',
-            //     choices: [currentDepts] 
-            // }
         ])
         .then(role => {
+            console.log(role);
             db.query(sql, {
                 title: role.title,
                 salary: role.salary,
-                department_id: role.department_id
+                department_id: role.department
             });
             console.table(role);
             mainMenu()
         });
 }
 
-function addEmployee () {
+async function addEmployee () {
     const sql = fs.readFileSync('./queries/addEmp_query.sql').toString();
+
+    const currentRoles = await db.promise().query('SELECT title, id FROM roles')
+    
+    const cR = currentRoles[0].map((role) => {
+        return {
+            name: role.title, 
+            value: role.id
+        }
+    })
+
+    const currentManagers = await db.promise().query('SELECT CONCAT(first_name, " ", last_name) AS manager, id FROM employee')
+    
+    const cM = currentManagers[0].map((manager) => {
+        return {
+            name: manager.manager, 
+            value: manager.id
+        }
+    })
+
 
     inquirer
         .prompt([
@@ -149,8 +157,9 @@ function addEmployee () {
             },
             {
                 message: "What is this employee's role id number?",
-                type: 'input',
-                name: 'role_id'
+                type: 'list',
+                name: 'role_id',
+                choices: cR
             },
             {
                 message: "Does this employee have a manager?",
@@ -165,9 +174,10 @@ function addEmployee () {
                 inquirer
                     .prompt([
                         {
-                            message: "What is this employee's manager id number?",
-                            type: 'input',
-                            name: 'manager_id'
+                            message: "What is this employee's manager's name?",
+                            type: 'list',
+                            name: 'manager_id',
+                            choices: cM
                         }
                     ])
                     .then(directReport => {
@@ -202,23 +212,43 @@ function addEmployee () {
         })
 }
 
-function updateEmployeeRole () {  
+async function updateEmployeeRole () {     
+    const currentEmployees = await db.promise().query('SELECT CONCAT(first_name, " ", last_name) AS employee, id FROM employee')
+
+    const cEmps = currentEmployees[0].map((emp) => {
+        return {
+            name: emp.employee, 
+            value: emp.id
+        }
+    })
+
+    const currentRoles = await db.promise().query('SELECT title, id FROM roles')
+    
+    const cR = currentRoles[0].map((role) => {
+        return {
+            name: role.title, 
+            value: role.id
+        }
+    })
+    
     inquirer
         .prompt([
             {
-                message: "What is the ID of the employee you would like to update?",
-                type: 'input',
-                name: 'id',
+                message: "What is the name of the employee you would like to update?",
+                type: 'list',
+                name: 'name',
+                choices: cEmps
             },
             {
-                message: "What is the id of the new role this employee will have?",
-                type: 'input',
-                name: 'role_id'
+                message: "What is the new role this employee will have?",
+                type: 'list',
+                name: 'role_id',
+                choices: cR
             }
         ])
         .then(roleUpdate => {
             //Could not get SQL statement to work in separate file so included in function.  
-            db.query(`UPDATE employee SET ? WHERE id = ${roleUpdate.id}`, roleUpdate)
+            db.query(`UPDATE employee SET role_id = ${roleUpdate.role_id} WHERE id = ${roleUpdate.name}`)
             console.table(roleUpdate);
             mainMenu()
         })
